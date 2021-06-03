@@ -1,8 +1,10 @@
-package com.example.boundservice23032021;
+package com.example.boundservice23032021.activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.boundservice23032021.R;
 
 public class MainActivity extends AppCompatActivity {
 
