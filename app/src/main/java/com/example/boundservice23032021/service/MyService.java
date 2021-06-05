@@ -7,6 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.os.Binder;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
 import com.example.boundservice23032021.R;
+import com.example.boundservice23032021.interfaces.OnListenCurrentTimeSong;
 import com.example.boundservice23032021.model.Song;
 
 public class MyService extends Service {
@@ -23,10 +25,17 @@ public class MyService extends Service {
     NotificationManager mNotificationManager;
     Notification mNotification;
     MediaPlayer mMediaPlayer;
+    OnListenCurrentTimeSong mOnListenCurrentTimeSong;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
-        return null;
+        return new MyBinder();
+    }
+
+    class MyBinder extends Binder {
+        MyService getService(){
+            return MyService.this;
+        }
     }
 
     @Override
@@ -45,12 +54,14 @@ public class MyService extends Service {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-
                     int currentTime = mMediaPlayer.getCurrentPosition();
                     if (currentTime < mMediaPlayer.getDuration()){
                         mNotification = createNotification(getApplicationContext(),currentTime , song.getTitle());
                         startForeground(1, mNotification);
                         new Handler().postDelayed(this,1000);
+                        if (mOnListenCurrentTimeSong != null){
+                            mOnListenCurrentTimeSong.onCurrentTime(currentTime);
+                        }
                     }
 
                 }
@@ -95,5 +106,8 @@ public class MyService extends Service {
             mNotificationManager.createNotificationChannel(notificationChannel);
         }
         return builder.build();
+    }
+    public void setOnListCurrentTimeSong(OnListenCurrentTimeSong onListCurrentTimeSong){
+        this.mOnListenCurrentTimeSong = onListCurrentTimeSong;
     }
 }
