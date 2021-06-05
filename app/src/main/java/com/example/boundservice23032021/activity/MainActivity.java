@@ -3,6 +3,7 @@ package com.example.boundservice23032021.activity;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,7 +11,9 @@ import android.util.Log;
 
 import com.example.boundservice23032021.R;
 import com.example.boundservice23032021.adapter.SongAdapter;
+import com.example.boundservice23032021.interfaces.OnItemClickSong;
 import com.example.boundservice23032021.model.Song;
+import com.example.boundservice23032021.service.MyService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,5 +53,13 @@ public class MainActivity extends AppCompatActivity {
 
         mRcvSong.setAdapter(mSongAdapter);
 
+        mSongAdapter.setOnItemClickSong(new OnItemClickSong() {
+            @Override
+            public void onClick(int position) {
+                Intent intent = new Intent(MainActivity.this, MyService.class);
+                intent.putExtra("objectsong",mListSong.get(position));
+                startService(intent);
+            }
+        });
     }
 }

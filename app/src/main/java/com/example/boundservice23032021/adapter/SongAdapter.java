@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.boundservice23032021.R;
+import com.example.boundservice23032021.interfaces.OnItemClickSong;
 import com.example.boundservice23032021.model.Song;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import java.util.List;
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder>{
 
     List<Song> mListSong;
+    OnItemClickSong mOnItemClickSong;
 
     public SongAdapter(List<Song> mListSong) {
         this.mListSong = mListSong;
@@ -53,6 +55,18 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
             txtIndex = itemView.findViewById(R.id.textViewIndex);
             txtTiTle = itemView.findViewById(R.id.textViewTitle);
             txtDuration = itemView.findViewById(R.id.textViewDuration);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(mOnItemClickSong != null){
+                        mOnItemClickSong.onClick(getAdapterPosition());
+                    }
+                }
+            });
         }
+    }
+    public void setOnItemClickSong(OnItemClickSong onItemClickSong){
+        this.mOnItemClickSong = onItemClickSong;
     }
 }

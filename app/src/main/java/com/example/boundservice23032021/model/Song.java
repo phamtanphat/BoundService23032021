@@ -1,6 +1,8 @@
 package com.example.boundservice23032021.model;
 
-public class Song {
+import java.io.Serializable;
+
+public class Song implements Serializable {
     String title;
     int data;
     long duration;
