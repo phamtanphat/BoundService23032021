@@ -32,8 +32,8 @@ public class MyService extends Service {
         return new MyBinder();
     }
 
-    class MyBinder extends Binder {
-        MyService getService(){
+    public class MyBinder extends Binder {
+        public MyService getService(){
             return MyService.this;
         }
     }
@@ -96,7 +96,7 @@ public class MyService extends Service {
         builder.setContentText("Current time song : " + "0" +minus + " : " + (second >= 10 ? second : "0" +second));
         builder.setShowWhen(true);
         builder.setSound(null);
-        builder.setPriority(Notification.PRIORITY_HIGH);
+        builder.setPriority(Notification.PRIORITY_DEFAULT);
 
         mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
