@@ -6,7 +6,9 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Build;
+import android.os.Handler;
 import android.os.IBinder;
 import android.widget.Toast;
 
@@ -20,6 +22,7 @@ public class MyService extends Service {
 
     NotificationManager mNotificationManager;
     Notification mNotification;
+    MediaPlayer mMediaPlayer;
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
@@ -36,10 +39,40 @@ public class MyService extends Service {
         Song song = (Song) intent.getSerializableExtra("objectsong");
 
         if (song != null){
-            mNotification = createNotification(this,song.getDuration() , song.getTitle());
+            startMp3(song);
+            mNotification = createNotification(this,0 , song.getTitle());
             startForeground(1, mNotification);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+
+                    int currentTime = mMediaPlayer.getCurrentPosition();
+                    if (currentTime < mMediaPlayer.getDuration()){
+                        mNotification = createNotification(getApplicationContext(),currentTime , song.getTitle());
+                        startForeground(1, mNotification);
+                        new Handler().postDelayed(this,1000);
+                    }
+
+                }
+            },1000);
         }
         return START_REDELIVER_INTENT;
+    }
+
+    private void startMp3(Song song) {
+        if (mMediaPlayer == null){
+            mMediaPlayer = MediaPlayer.create(this, song.getData());
+        }else if (mMediaPlayer.isPlaying()){
+            mMediaPlayer.stop();
+            mMediaPlayer.release();
+            mMediaPlayer = MediaPlayer.create(this, song.getData());
+        }
+        mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mediaPlayer) {
+                mediaPlayer.start();
+            }
+        });
     }
 
     public Notification createNotification(Context context, long duration , String title) {
